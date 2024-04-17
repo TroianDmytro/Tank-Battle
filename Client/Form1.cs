@@ -46,13 +46,15 @@ namespace Client
             if (e.KeyCode != Keys.Space && premissionToMove)
             {
                 Player.Move(e.KeyCode, Player.Speed);
+                premissionToMove = false;
+
             }
             else if (e.KeyCode == Keys.Space && premissionToFire)
             {
                 Player.Fire(new Projectile());
+                premissionToFire = false;
             }
 
-            premissionToMove = premissionToFire = false;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -81,7 +83,7 @@ namespace Client
                         keys = Keys.Right;
 
                     item[i].Move(keys, item[i].Speed);
-                    if (Player.OutsideTheBorder(item[i]))
+                    if (item[i].OutsideTheBorder(Panel_gameField))
                     {
                         item[i].Dispose();
                         item[i] = null;

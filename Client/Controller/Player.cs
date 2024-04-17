@@ -54,7 +54,7 @@ namespace Client.Controller
                 {
                     projectile.Rotate(Keys.Up);
                     projectile.Picture.Location = new Point(this.Picture.Location.X + 16, this.Picture.Location.Y - 30);
-                    //GamePanel.Controls.Add(projectile.Picture);
+                    //gamePanel.Controls.Add(projectile.Picture);
                 }
             }
             else if (this.Vector == MyVector.BOTTOM)
@@ -72,7 +72,7 @@ namespace Client.Controller
                 {
                     projectile.Rotate(Keys.Left);
                     projectile.Picture.Location = new Point(this.Picture.Location.X - 30, this.Picture.Location.Y + 16);
-                    //GamePanel.Controls.Add(projectile.Picture);
+                    //gamePanel.Controls.Add(projectile.Picture);
                 }
             }
             else if (this.Vector == MyVector.RIGHT)
@@ -81,47 +81,14 @@ namespace Client.Controller
                 {
                     projectile.Rotate(Keys.Right);
                     projectile.Picture.Location = new Point(this.Picture.Location.X + this.Picture.Width + 30 , this.Picture.Location.Y +16);
-                    //GamePanel.Controls.Add(projectile.Picture);
+                    //gamePanel.Controls.Add(projectile.Picture);
                 }
             }
             GamePanel.Controls.Add(projectile.Picture);
             listProjectile.Add(projectile);
         }
 
-        public bool OutsideTheBorder(Projectile projectile)
-        {
-            bool result = false;
-            if (projectile.Vector == MyVector.TOP)
-            {
-                if (projectile.Picture.Location.Y < 10)
-                {
-                    result = true;
-                }
-            }
-            else if (projectile.Vector == MyVector.BOTTOM)
-            {
-                if (projectile.Picture.Location.Y > GamePanel.Height - 40)
-                {
-                    result = true;
-                }
-            }
-            else if (projectile.Vector == MyVector.LEFT)
-            {
-                if (projectile.Picture.Location.X < 10)
-                {
-                    result = true;
-                }
-            }
-            else if (projectile.Vector == MyVector.RIGHT)
-            {
-                if (projectile.Picture.Location.X > GamePanel.Width - 20)
-                {
-                    result = true;
-                }
-            }
-
-            return result;
-        }
+        
         public void StartPosition(Panel panel)
         {
             GamePanel = panel;
