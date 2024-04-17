@@ -4,30 +4,20 @@ using System.Windows.Forms;
 
 namespace Client.Controller
 {
-    public enum MyVector
+    public class Player: ObjectOfThePlayingField
     {
-        TOP,
-        RIGHT,
-        BOTTOM,
-        LEFT
-    }
-    public class Player
-    {
-        public int Speed {  get; set; }
-        public Image Image { get; set; }
-
         public string PlayerTag { get; set; }
-
-        public MyVector Vector { get; set; }
-        public PictureBox Picture { get; set; }
 
         public Panel GamePanel { get; set; }
 
         public Projectile Projectile { get; set; }
 
+        public List<Projectile> listProjectile;
+
         public Player()
         {
             Picture = new PictureBox();
+            listProjectile = new();
         }
 
         public bool CreatePlayer(string playerTag)
@@ -56,55 +46,83 @@ namespace Client.Controller
             return true;
         }
 
-        // рух танку по полю
-        public void Move(Keys keys, int speed)
-        {
-            if (keys == Keys.Up && this.Vector == MyVector.TOP)
-            {
-                this.Picture.Location = new Point(this.Picture.Location.X, this.Picture.Location.Y - speed);
-                return;
-            }
-            else if (keys == Keys.Left && this.Vector == MyVector.LEFT)
-            {
-                this.Picture.Location = new Point(this.Picture.Location.X-speed, this.Picture.Location.Y);
-                return;
-            }
-            else if (keys == Keys.Right && this.Vector == MyVector.RIGHT)
-            {
-                this.Picture.Location = new Point(this.Picture.Location.X+speed, this.Picture.Location.Y);
-                return;
-            }
-            else if (keys == Keys.Down && this.Vector == MyVector.BOTTOM)
-            {
-                this.Picture.Location = new Point(this.Picture.Location.X, this.Picture.Location.Y + speed);
-                return;
-            }
-            Rotate(keys);
-        }
-
-
-
         public void Fire(Projectile projectile)
         {
             if (this.Vector == MyVector.TOP)
             {
-                if(projectile.pictureBox.Location.X > GamePanel.Location.X+30)
+                if(this.Picture.Location.X > GamePanel.Location.X+30)
                 {
-                    projectile.pictureBox.Location = new Point(this.Picture.Location.X + 16, this.Picture.Location.Y - 30);
-                    GamePanel.Controls.Add(projectile.pictureBox);
+                    projectile.Rotate(Keys.Up);
+                    projectile.Picture.Location = new Point(this.Picture.Location.X + 16, this.Picture.Location.Y - 30);
+                    //GamePanel.Controls.Add(projectile.Picture);
                 }
             }
             else if (this.Vector == MyVector.BOTTOM)
             {
-                if (projectile.pictureBox.Location.Y > GamePanel.Location.Y - 30)
+                if (this.Picture.Location.Y <  GamePanel.Size.Height - 30)
                 {
-                    projectile.pictureBox.Location = new Point(this.Picture.Location.X + 16, this.Picture.Location.Y - 30);
-                    GamePanel.Controls.Add(projectile.pictureBox);
+                    projectile.Rotate(Keys.Down);
+                    projectile.Picture.Location = new Point(this.Picture.Location.X + 16, this.Picture.Location.Y + this.Picture.Height + 30); ;
+                    GamePanel.Controls.Add(projectile.Picture);
                 }
             }
+            else if (this.Vector == MyVector.LEFT)
+            {
+                if (this.Picture.Location.X > GamePanel.Location.X + 30)
+                {
+                    projectile.Rotate(Keys.Left);
+                    projectile.Picture.Location = new Point(this.Picture.Location.X - 30, this.Picture.Location.Y + 16);
+                    //GamePanel.Controls.Add(projectile.Picture);
+                }
+            }
+            else if (this.Vector == MyVector.RIGHT)
+            {
+                if (this.Picture.Location.X < GamePanel.Size.Width - 30)
+                {
+                    projectile.Rotate(Keys.Right);
+                    projectile.Picture.Location = new Point(this.Picture.Location.X + this.Picture.Width + 30 , this.Picture.Location.Y +16);
+                    //GamePanel.Controls.Add(projectile.Picture);
+                }
+            }
+            GamePanel.Controls.Add(projectile.Picture);
+            listProjectile.Add(projectile);
         }
 
-        public void Position(Panel panel)
+        public bool OutsideTheBorder(Projectile projectile)
+        {
+            bool result = false;
+            if (projectile.Vector == MyVector.TOP)
+            {
+                if (projectile.Picture.Location.Y < 10)
+                {
+                    result = true;
+                }
+            }
+            else if (projectile.Vector == MyVector.BOTTOM)
+            {
+                if (projectile.Picture.Location.Y > GamePanel.Height - 40)
+                {
+                    result = true;
+                }
+            }
+            else if (projectile.Vector == MyVector.LEFT)
+            {
+                if (projectile.Picture.Location.X < 10)
+                {
+                    result = true;
+                }
+            }
+            else if (projectile.Vector == MyVector.RIGHT)
+            {
+                if (projectile.Picture.Location.X > GamePanel.Width - 20)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+        public void StartPosition(Panel panel)
         {
             GamePanel = panel;
 
@@ -126,68 +144,7 @@ namespace Client.Controller
 
         }
 
-        //розвертае Image
-        public void Rotate(Keys keys)
-        {
-            if (keys == Keys.Up)/////////////////////////////
-            {
-                if (this.Vector == MyVector.RIGHT)
-                {
-                    this.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                    this.Picture.Image = this.Image;
-                    this.Vector = MyVector.TOP;
-                }
-                else if (this.Vector == MyVector.LEFT)
-                {
-                    this.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                    this.Picture.Image = this.Image;
-                    this.Vector = MyVector.TOP;
-                }
-                else if (this.Vector == MyVector.BOTTOM)
-                {
-                    this.Image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                    this.Picture.Image = this.Image;
-                    this.Vector = MyVector.TOP;
-                }
-            }
-            else if (keys == Keys.Left)// поворот в ліво
-            {
-                if (this.Vector == MyVector.TOP) 
-                    this.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                else if (this.Vector == MyVector.RIGHT)
-                    this.Image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                else if (this.Vector == MyVector.BOTTOM)
-                    this.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-
-                this.Picture.Image = this.Image;
-                this.Vector = MyVector.LEFT;
-            }
-            else if(keys == Keys.Right)// поворот в право
-            {
-                if (this.Vector == MyVector.TOP)
-                    this.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                else if (this.Vector == MyVector.LEFT)
-                    this.Image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                else if (this.Vector == MyVector.BOTTOM)
-                    this.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-
-                this.Picture.Image = this.Image;
-                this.Vector = MyVector.RIGHT;
-            }
-            else if(keys == Keys.Down)// поворот в низ
-            {
-                if (this.Vector == MyVector.TOP)
-                    this.Image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                else if (this.Vector == MyVector.LEFT)
-                    this.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                else if (this.Vector == MyVector.RIGHT)
-                    this.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-
-                this.Picture.Image = this.Image;
-                this.Vector = MyVector.BOTTOM;
-            }
-
-        }
+        
 
     }
 }

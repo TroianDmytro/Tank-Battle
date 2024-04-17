@@ -34,6 +34,7 @@
             Mstrip_connectItem = new ToolStripMenuItem();
             Panel_gameField = new Panel();
             timer1 = new System.Windows.Forms.Timer(components);
+            timerFire = new System.Windows.Forms.Timer(components);
             Mstrip_mainMenu.SuspendLayout();
             SuspendLayout();
             // 
@@ -75,8 +76,15 @@
             // 
             // timer1
             // 
+            timer1.Enabled = true;
             timer1.Interval = 200;
             timer1.Tick += timer1_Tick;
+            // 
+            // timerFire
+            // 
+            timerFire.Enabled = true;
+            timerFire.Interval = 800;
+            timerFire.Tick += timerFire_Tick;
             // 
             // Form1
             // 
@@ -110,5 +118,6 @@
         private ToolStripMenuItem Mstrip_connectItem;
         private Panel Panel_gameField;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timerFire;
     }
 }
