@@ -103,6 +103,7 @@
             MinimizeBox = false;
             Name = "Form1";
             Text = "Tank Battle";
+            FormClosing += Form1_FormClosing;
             Load += Form1_Load;
             KeyDown += Form1_KeyDown;
             Mstrip_mainMenu.ResumeLayout(false);

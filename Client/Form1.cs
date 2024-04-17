@@ -1,14 +1,16 @@
 using Client.Controller;
 using Client.Model;
+using ReceivingAndSendingMessanges;
 
 namespace Client
 {
     public partial class Form1 : Form
     {
         Player Player { get; set; }
-        Conecting conecting;
+        Conecting connecting;
         bool premissionToMove = true;
         bool premissionToFire = true;
+        Messange messange;
         public Form1()
         {
             InitializeComponent();
@@ -22,7 +24,13 @@ namespace Client
 
         private void Mstrip_connectItem_Click(object sender, EventArgs e)
         {
-            conecting = new Conecting();
+            connecting = new Conecting();
+            messange = new Messange();
+            bool b = connecting.ConnectingToClientAsync().Result;
+            if (b)
+            {
+                string str = messange.GetMessange(connecting.ClientSocket);
+            }
             Player.CreatePlayer("Player1");
             Player.StartPosition(Panel_gameField);
             Panel_gameField.Controls.Add(Player.Picture);
@@ -33,7 +41,7 @@ namespace Client
             //Player player2 = new Player();
             //player2.CreatePlayer("Player2");
             //player2.StartPosition(Panel_gameField);
-            //if (!conecting.ConnectingToServer())
+            //if (!connecting.ConnectingToServer())
             //{
             //    MessageBox.Show("Not connecting");
             //    return;
@@ -99,6 +107,11 @@ namespace Client
         private void timerFire_Tick(object sender, EventArgs e)
         {
             premissionToFire = true;
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            connecting.Close();
         }
     }
 }

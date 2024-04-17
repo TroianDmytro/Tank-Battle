@@ -14,21 +14,36 @@ namespace Client.Model
 
         public bool ConnectingToServer()
         {
+            bool result = false;
             try
             {
                 IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse(SERVER_IP), SERVER_PORT);
                 ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                 ClientSocket.Connect(iPEndPoint);
+                result = true;
+            }
+            catch (Exception)
+            {
+                return result;
+            }
+            return result;
+            
+        }
+
+        public async Task<bool> ConnectingToClientAsync() 
+        {
+            try
+            {
+                Task < bool> task =  Task<bool>.Factory.StartNew(() => ConnectingToServer());
+                return task.Result;
             }
             catch (Exception)
             {
                 return false;
             }
-            return true;
-            
+           
         }
-
         public void Close()
         {
             if (ClientSocket != null)
