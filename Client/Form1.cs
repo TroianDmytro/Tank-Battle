@@ -39,7 +39,7 @@ namespace Client
                 Mstrip_connectItem.Enabled = true;
                 return;
             }
-            Player.socket = connecting.ClientSocket;
+            Players.socket = connecting.ClientSocket;
             str = await ReceivingAndSendingMessanges.Messange.GetMessangeAsync(connecting.ClientSocket);
 
             if (str.Equals("Player1") || str.Equals("Player2"))
@@ -53,7 +53,7 @@ namespace Client
 
             }
 
-            Enemy.socket = connecting.ClientSocket;
+            //Enemy.socket = connecting.ClientSocket;///////////////////////////////
 
             if (Player.PlayerTag == "Player1")
             {
@@ -113,6 +113,7 @@ namespace Client
             else if (e.KeyCode == Keys.Space && premissionToFire)
             {
                 Player.Fire(new Projectile());
+                //Players.SetObjPlayer(new Projectile());
                 premissionToFire = false;
             }
 
@@ -149,6 +150,33 @@ namespace Client
                         item[i].Dispose();
                         item[i] = null;
                         Player.listProjectile.Remove(item[i]);
+
+                        return;
+                    }
+                }
+            }
+            if (Enemy.listProjectile != null)
+            {
+                var item = Enemy.listProjectile;
+                for (int i = 0; i < item.Count; i++)
+                {
+                    Keys keys = new Keys();
+
+                    if (item[i].Vector == MyVector.TOP)
+                        keys = Keys.Up;
+                    else if (item[i].Vector == MyVector.BOTTOM)
+                        keys = Keys.Down;
+                    else if ((item[i].Vector == MyVector.LEFT))
+                        keys = Keys.Left;
+                    else if ((item[i].Vector == MyVector.RIGHT))
+                        keys = Keys.Right;
+
+                    item[i].Move(keys, item[i].Speed);
+                    if (item[i].OutsideTheBorder(Panel_gameField))
+                    {
+                        item[i].Dispose();
+                        item[i] = null;
+                        Enemy.listProjectile.Remove(item[i]);
 
                         return;
                     }

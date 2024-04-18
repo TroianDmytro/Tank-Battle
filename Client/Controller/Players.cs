@@ -16,23 +16,19 @@ namespace Client.Controller
 
         public List<Projectile> listProjectile;
 
-        public Socket socket {  get; set; }
+        public static Socket socket {  get; set; }
 
         public Players()
         {
             Picture = new PictureBox();
             listProjectile = new();
-
         }
         
 
         // відправляем обьект ObjectMessangePlayer на сервер
-        public static void SetObjPlayer(Players player)
+        public static void SetObjPlayer(ObjectOfThePlayingField player)
         {
             ObjectMessangePlayer obj = new ObjectMessangePlayer();
-            obj.LocationPlayerX = player.Picture.Location.X;
-            obj.LocationPlayerY = player.Picture.Location.Y;
-            obj.Name = "Player";
 
             if (player.Vector == MyVector.TOP)
                 obj.VectorProjectile = "Top";
@@ -43,8 +39,23 @@ namespace Client.Controller
             else if (player.Vector == MyVector.RIGHT)
                 obj.VectorProjectile = "Right";
 
+            if (player is Players)
+            {
+                Players objPlayer = player as Players;
+                obj.Name = "Player";
+                obj.LocationPlayerX = objPlayer.Picture.Location.X;
+                obj.LocationPlayerY = objPlayer.Picture.Location.Y;
+            }
+            else if(player is Projectile)
+            {
+                Projectile objPlayer = player as Projectile;
+                obj.Name = "Projectile";
+                obj.LocationPlayerX = objPlayer.Picture.Location.X;
+                obj.LocationPlayerY = objPlayer.Picture.Location.Y;
+            }
+           
             string objJSON = ObjectMessangePlayer.SerializeToJSON(obj);
-            ReceivingAndSendingMessanges.Messange.SendMessage(player.socket, objJSON);
+            ReceivingAndSendingMessanges.Messange.SendMessage(Players.socket, objJSON);
         }
 
         // опримуемо об'ект ObjectMessangePlayer 
@@ -52,32 +63,54 @@ namespace Client.Controller
         {
             if (obj == null) return null;
 
-            if (obj.Name.Equals("Player") || obj.Name.Equals("Player"))
+            Keys keys = new();
+
+            if (obj.Name.Equals("Player"))
             {
-                Keys keys = new Keys();
                 enemy.Picture.Location = new Point(obj.LocationPlayerX, obj.LocationPlayerY);
                 if (obj.VectorProjectile.Equals("Top"))
                 {
-                    //enemy.Vector = MyVector.TOP;
                     keys = Keys.Up;
                 }
                 else if (obj.VectorProjectile.Equals("Left"))
                 {
-                    //enemy.Vector = MyVector.LEFT;
                     keys = Keys.Left;
                 }
                 else if (obj.VectorProjectile.Equals("Right"))
                 {
-                    //enemy.Vector = MyVector.RIGHT;
                     keys = Keys.Right;
                 }
                 else if (obj.VectorProjectile.Equals("Bottom"))
                 {
-                    //enemy.Vector = MyVector.BOTTOM;
                     keys = Keys.Down;
                 }
                 enemy.Rotate(keys);
             }
+            else if (obj.Name.Equals("Projectile"))
+            {
+                Projectile projectile = new Projectile();
+                projectile.Picture.Location = new Point(obj.LocationPlayerX,obj.LocationPlayerY);
+                if (obj.VectorProjectile.Equals("Top"))
+                {
+                    keys = Keys.Up;
+                }
+                else if (obj.VectorProjectile.Equals("Left"))
+                {
+                    keys = Keys.Left;
+                }
+                else if (obj.VectorProjectile.Equals("Right"))
+                {
+                    keys = Keys.Right;
+                }
+                else if (obj.VectorProjectile.Equals("Bottom"))
+                {
+                    keys = Keys.Down;
+                }
+                projectile.Rotate(keys);
+                enemy.GamePanel.Controls.Add(projectile.Picture);
+                enemy.listProjectile.Add(projectile);
+            }
+
             return obj.Command;
 
         }
@@ -140,7 +173,7 @@ namespace Client.Controller
                 {
                     projectile.Rotate(Keys.Down);
                     projectile.Picture.Location = new Point(this.Picture.Location.X + 16, this.Picture.Location.Y + this.Picture.Height + 30); ;
-                    GamePanel.Controls.Add(projectile.Picture);
+                    //GamePanel.Controls.Add(projectile.Picture);
                 }
             }
             else if (this.Vector == MyVector.LEFT)
@@ -159,8 +192,10 @@ namespace Client.Controller
                     projectile.Picture.Location = new Point(this.Picture.Location.X + this.Picture.Width + 30 , this.Picture.Location.Y +16);
                 }
             }
+            Players.SetObjPlayer(projectile);
             GamePanel.Controls.Add(projectile.Picture);
             listProjectile.Add(projectile);
+
         }
 
         // початкова погиція гравців
