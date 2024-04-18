@@ -4,10 +4,11 @@ using System.Text;
 
 namespace ReceivingAndSendingMessanges
 {
-    //Відправка і приом повідомлень
+    //Відправка і прийом повідомлень
     public class Messange
     {
-        public string GetMessange(Socket socket)
+        // прием повідомлення
+        public static string GetMessange(Socket socket)
         {
             byte[] buffer = new byte[1024];
             int bytesRead = socket.Receive(buffer);
@@ -16,9 +17,17 @@ namespace ReceivingAndSendingMessanges
             return str;
         }
 
-        public void SendMessage(Socket socket, string message) 
+        public async static Task<string> GetMessangeAsync(Socket socket)
         {
-            socket.Send(Encoding.Unicode.GetBytes(message));
+            Task<string> result = Task<string>.Factory.StartNew(() => GetMessange(socket));
+            await result;
+            return result.Result;
+        }
+
+        // відправка
+        public static void SendMessage(Socket socket, string message) 
+        {
+            socket?.SendAsync(Encoding.Unicode.GetBytes(message));
         }
     }
 }

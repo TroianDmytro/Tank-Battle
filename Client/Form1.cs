@@ -1,15 +1,17 @@
 using Client.Controller;
 using Client.Model;
+using ObjectMessange;
 using ReceivingAndSendingMessanges;
 
 namespace Client
 {
     public partial class Form1 : Form
     {
-        Player Player { get; set; }
-        Conecting connecting;
+        Players Player { get; set; }
+        public Conecting connecting;
         bool premissionToMove = true;
         bool premissionToFire = true;
+        Players Enemy {  get; set; }
         Messange messange;
         public Form1()
         {
@@ -18,35 +20,85 @@ namespace Client
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Player = new Player();
+            Player = new Players();
+            Enemy = new Players();
 
         }
 
-        private void Mstrip_connectItem_Click(object sender, EventArgs e)
+        private async void Mstrip_connectItem_Click(object sender, EventArgs e)
         {
+            Mstrip_connectItem.Enabled = false;
             connecting = new Conecting();
             messange = new Messange();
-            bool b = connecting.ConnectingToClientAsync().Result;
-            if (b)
+
+            bool b = await connecting.ConnectingToClientAsync();
+            string str = string.Empty;
+            if (!b)
             {
-                string str = messange.GetMessange(connecting.ClientSocket);
+                MessageBox.Show("Not connecting");
+                Mstrip_connectItem.Enabled = true;
+                return;
             }
-            Player.CreatePlayer("Player1");
-            Player.StartPosition(Panel_gameField);
-            Panel_gameField.Controls.Add(Player.Picture);
+            Player.socket = connecting.ClientSocket;
+            str = await ReceivingAndSendingMessanges.Messange.GetMessangeAsync(connecting.ClientSocket);
 
-            //Player.Fire(new Projectile());
+            if (str.Equals("Player1") || str.Equals("Player2"))
+            {
+                // створюемо гравц€
+                Player.CreatePlayer(str);
+                // виставл€емо координати на пол≥
+                Player.StartPosition(Panel_gameField);
+                // додаемо гравц€ на пол≥
+                Panel_gameField.Controls.Add(Player.Picture);
+
+            }
+
+            Enemy.socket = connecting.ClientSocket;
+
+            if (Player.PlayerTag == "Player1")
+            {
+                var s = await ReceivingAndSendingMessanges.Messange.GetMessangeAsync(connecting.ClientSocket);
+                if (s.Equals("Connecting Player2"))
+                {
+                    // додаемо противника на ≥грове поле
+                    Enemy.CreateEnemi(str);
+                    Enemy.StartPosition(Panel_gameField);
+                    Panel_gameField.Controls.Add(Enemy.Picture);
+                }
+            }
+            else
+            {
+                // додаемо противника на ≥грове поле
+                Enemy.CreateEnemi(str);
+                Enemy.StartPosition(Panel_gameField);
+                Panel_gameField.Controls.Add(Enemy.Picture);
+            }
 
 
-            //Player player2 = new Player();
-            //player2.CreatePlayer("Player2");
-            //player2.StartPosition(Panel_gameField);
-            //if (!connecting.ConnectingToServer())
-            //{
-            //    MessageBox.Show("Not connecting");
-            //    return;
-            //}
-            //Panel_gameField.Controls.Add(player2.Image);
+
+            Task task = Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+                    string temp = ReceivingAndSendingMessanges.Messange.GetMessangeAsync(connecting.ClientSocket).Result;
+                    string commandServer = string.Empty;
+                    try
+                    {
+                        ObjectMessangePlayer objectMessangePlayer = ObjectMessangePlayer.DesiarilizeFromJSON(temp);
+                        Action action = () =>
+                        {
+                            commandServer = Players.GetObjPlayer(Enemy, objectMessangePlayer);
+                        };
+                        Invoke(action);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error");
+                    }
+
+
+                }
+            });
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -54,6 +106,7 @@ namespace Client
             if (e.KeyCode != Keys.Space && premissionToMove)
             {
                 Player.Move(e.KeyCode, Player.Speed);
+                Players.SetObjPlayer(Player);
                 premissionToMove = false;
 
             }
@@ -101,7 +154,6 @@ namespace Client
                     }
                 }
             }
-
         }
 
         private void timerFire_Tick(object sender, EventArgs e)
@@ -111,7 +163,10 @@ namespace Client
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            connecting.Close();
+            if(connecting != null)
+            {
+                connecting.Close();
+            }
         }
     }
 }

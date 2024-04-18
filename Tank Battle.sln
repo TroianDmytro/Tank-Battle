@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{A56CE631-A559-4EA3-8195-D095C0A7C8EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csproj", "{A56CE631-A559-4EA3-8195-D095C0A7C8EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{28814F42-545D-408E-AA8B-52A88FC0E464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{28814F42-545D-408E-AA8B-52A88FC0E464}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReceivingAndSendingMessanges", "ReceivingAndSendingMessanges\ReceivingAndSendingMessanges.csproj", "{FDF619AA-75B7-4F28-96C9-E63282B9A177}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReceivingAndSendingMessanges", "ReceivingAndSendingMessanges\ReceivingAndSendingMessanges.csproj", "{FDF619AA-75B7-4F28-96C9-E63282B9A177}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectMessange", "ObjectMessange\ObjectMessange.csproj", "{4BBA5B3A-70FD-4ADD-AA6C-E6D1E4B16A97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{FDF619AA-75B7-4F28-96C9-E63282B9A177}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDF619AA-75B7-4F28-96C9-E63282B9A177}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDF619AA-75B7-4F28-96C9-E63282B9A177}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BBA5B3A-70FD-4ADD-AA6C-E6D1E4B16A97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BBA5B3A-70FD-4ADD-AA6C-E6D1E4B16A97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BBA5B3A-70FD-4ADD-AA6C-E6D1E4B16A97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BBA5B3A-70FD-4ADD-AA6C-E6D1E4B16A97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -83,7 +83,7 @@
             // timerFire
             // 
             timerFire.Enabled = true;
-            timerFire.Interval = 800;
+            timerFire.Interval = 1000;
             timerFire.Tick += timerFire_Tick;
             // 
             // Form1

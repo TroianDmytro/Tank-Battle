@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ObjectMessange\ObjectMessange.csproj" />
     <ProjectReference Include="..\ReceivingAndSendingMessanges\ReceivingAndSendingMessanges.csproj" />
   </ItemGroup>
 

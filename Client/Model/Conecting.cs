@@ -12,6 +12,7 @@ namespace Client.Model
         const string SERVER_IP = "127.0.0.1";
         public Socket ClientSocket;
 
+        // підключення до сервера
         public bool ConnectingToServer()
         {
             bool result = false;
@@ -36,6 +37,7 @@ namespace Client.Model
             try
             {
                 Task < bool> task =  Task<bool>.Factory.StartNew(() => ConnectingToServer());
+                await task;
                 return task.Result;
             }
             catch (Exception)
@@ -44,9 +46,10 @@ namespace Client.Model
             }
            
         }
+
         public void Close()
         {
-            if (ClientSocket != null)
+            if (ClientSocket.Connected)
             {
                 ClientSocket.Shutdown(SocketShutdown.Both);
                 ClientSocket.Close();

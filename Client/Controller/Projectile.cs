@@ -3,11 +3,9 @@ using System.Windows.Forms;
 
 namespace Client.Controller
 {
+    // снаряд
     public class Projectile: ObjectOfThePlayingField, IDisposable
     {
-        //public PictureBox pictureBox;
-        //public Image Image { get; set; }
-        //int Speed { get; set; }
         public Projectile()
         {
             Image = new Bitmap(Properties.Resources.klipartz_com);
@@ -16,7 +14,7 @@ namespace Client.Controller
             Picture.Size = new Size(30, 30);
             Picture.SizeMode = PictureBoxSizeMode.Zoom;
             Vector = MyVector.RIGHT;
-            Speed = 20;
+            Speed = 25;
             Picture.Tag = "Projectile";
         }
 

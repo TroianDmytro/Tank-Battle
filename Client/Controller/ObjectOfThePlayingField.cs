@@ -1,6 +1,9 @@
 ﻿
+using ObjectMessange;
+
 namespace Client.Controller
 {
+    // направлення гравця
     public enum MyVector
     {
         TOP,
@@ -8,12 +11,14 @@ namespace Client.Controller
         BOTTOM,
         LEFT
     }
+    // обьек ігрового поля
     public class ObjectOfThePlayingField
     {
         public int Speed { get; set; }
-        public Image Image { get; set; }
+        public Image Image;
         public MyVector Vector { get; set; }
-        public  PictureBox Picture { get; set; }
+
+        public PictureBox Picture;
 
         // перевіряе вихід за ігрове поле
         public bool OutsideTheBorder(Panel gamePanel)
@@ -25,7 +30,7 @@ namespace Client.Controller
             bool result = false;
             if (this == null)
                 return result;
-            Player player = this as Player;
+            Players player = this as Players;
             if (player != null)
             {
                 i = 10;
@@ -65,14 +70,14 @@ namespace Client.Controller
             return result;
         }
 
-        // рух танку по полю
+        // рух по полю
         public void Move(Keys keys, int speed)
         {
             if (keys == null || this == null)
             {
                 return;
             }
-            Player player = this as Player;
+            Players player = this as Players;
 
             var location = this.Picture.Location;
             if (keys == Keys.Up && this.Vector == MyVector.TOP)
@@ -104,10 +109,12 @@ namespace Client.Controller
             this.Picture.Location = location;
         }
 
+        
+
         //розвертае Image
         public void Rotate(Keys keys)
         {
-            if (keys == Keys.Up)/////////////////////////////
+            if (keys == Keys.Up)
             {
                 if (this.Vector == MyVector.RIGHT)
                 {
