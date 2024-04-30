@@ -80,62 +80,7 @@ Task task1 = Task.Factory.StartNew(() =>
     }
 });
 
-
-
-
-
-
-
-
 Console.ReadLine();
-#region TCP
-////ReceivingAndSendingMessanges.TCPMessanges messange = new ReceivingAndSendingMessanges.TCPMessanges();
-
-//// підключення сервера
-//using var socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-//socketServer.Bind(iPEndPoint);
-//socketServer.Listen();
-//ColorMessang("Server Start", colorServer);
-
-
-//// підключення першого гравця
-//Socket clientSocet_1 = await socketServer.AcceptAsync();
-//ReceivingAndSendingMessanges.TCPMessanges.TCPSendMessage(clientSocet_1, "Player1");
-//ColorMessang("Connecting Player1", colorServer);
-
-//// підключення другого гравця
-//Socket clientSocet_2 = await socketServer.AcceptAsync();
-//ReceivingAndSendingMessanges.TCPMessanges.TCPSendMessage(clientSocet_2, "Player2");
-//ColorMessang("Connecting Player2", colorServer);
-
-//// відправка першому гравцю повідомлення про підключення дрyгого гравця
-//ReceivingAndSendingMessanges.TCPMessanges.TCPSendMessage(clientSocet_1, "Connecting Player2");
-
-
-//Task task1 = Task.Factory.StartNew(() =>
-//{
-//    string MessangeClient1 = string.Empty;
-//    ObjectMessangePlayer obj = new ObjectMessangePlayer();
-//    while (true)
-//    {
-//        MessangeClient1 = ReceivingAndSendingMessanges.TCPMessanges.TCPGetMessange(clientSocet_1);
-//        ReceivingAndSendingMessanges.TCPMessanges.TCPSendMessage(clientSocet_2, MessangeClient1);
-//        ColorMessang(MessangeClient1, colorClient1);
-//    }
-//});
-
-//Task task2 = Task.Factory.StartNew(() => 
-//{
-//    string MessangeClient2 = string.Empty;
-//    while (true)
-//    {
-//        MessangeClient2 = ReceivingAndSendingMessanges.TCPMessanges.TCPGetMessange(clientSocet_2);
-//        ReceivingAndSendingMessanges.TCPMessanges.TCPSendMessage(clientSocet_1, MessangeClient2);
-//        ColorMessang(MessangeClient2, colorClient2);
-//    }
-//});
-#endregion
 
 udpServer.Close();
 udpServer.Dispose();

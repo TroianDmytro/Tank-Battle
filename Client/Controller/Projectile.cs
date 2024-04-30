@@ -27,15 +27,5 @@ namespace Client.Controller
             }
         }
 
-
-
-        //public Image SetVector(MyVector vector)
-        //{
-        //    Image temp = new Bitmap(Properties.Resources.klipartz_com);
-
-        //    if (vector == MyVector.TOP)
-        //    {
-        //    }
-        //}
     }
 }

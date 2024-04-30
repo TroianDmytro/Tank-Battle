@@ -23,7 +23,6 @@ namespace Client.Model
             bool result = false;
             try
             {
-                //using UDPClient udpServer = new UDPClient();
                 udpClient = new UdpClient();
                 udpClient.Connect(udpIPEndPoint);
                 ClientSocket = udpClient.Client;

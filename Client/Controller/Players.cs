@@ -3,8 +3,6 @@ using ObjectMessange;
 using ReceivingAndSendingMessanges;
 using System.Net;
 using System.Net.Sockets;
-using System.Numerics;
-using System.Windows.Forms;
 
 namespace Client.Controller
 {
@@ -62,7 +60,6 @@ namespace Client.Controller
             obj.ID = player.ID;
 
             string objJSON = ObjectMessangePlayer.SerializeToJSON(obj);
-            //ReceivingAndSendingMessanges.TCPMessanges.TCPSendMessage(Players.TCPsocket, objJSON);// TCP
             UDPMessanges.UDPSendMessage(Players.UDPClient,/*Players.ServerIPEndPoint,*/ objJSON);
         }
 
@@ -183,7 +180,6 @@ namespace Client.Controller
                 {
                     projectile.Rotate(Keys.Down);
                     projectile.Picture.Location = new Point(this.Picture.Location.X + 16, this.Picture.Location.Y + this.Picture.Height + 30); ;
-                    //GamePanel.Controls.Add(projectile.Picture);
                 }
             }
             else if (this.Vector == MyVector.LEFT)
@@ -223,8 +219,6 @@ namespace Client.Controller
                 Picture.Location = new Point(panel.Width / 2 - Picture.Width / 2 - 10, 10);
             }
         }
-        
-
         
 
     }

@@ -31,10 +31,8 @@ namespace Client
 
             Mstrip_connectItem.Enabled = false;// блокуе кнопку Connect
 
-            //TCPConnecting = new TCPConecting();// TCP
             UDPConnecting = new UDPConnecting();// UDP
 
-            //bool b = await TCPConnecting.TCPConnectingToClientAsync();// створення пидключення до сервера TCP
             bool b = await UDPConnecting.UDPConnectingToServerAsync(); // створення пидключення до сервера UDP
 
             string str = string.Empty;
@@ -45,12 +43,10 @@ namespace Client
                 return;
             }
 
-            //Players.TCPsocket = TCPConnecting.ClientSocket;// TCP
             Players.UDPClient = UDPConnecting.udpClient;// UDP
             Players.ServerIPEndPoint = UDPConnecting.udpIPEndPoint;// UDP
             Players.SetObjPlayer(Player);//UDP
 
-            //str = await ReceivingAndSendingMessanges.TCPMessanges.TCPGetMessangeAsync(TCPConnecting.ClientSocket);//отримання повідомлення з PlayerTag гравця (Player1 or Player2)
             str = await ReceivingAndSendingMessanges.UDPMessanges.UDPGetMessangeAsync(UDPConnecting.udpClient,new IPEndPoint(IPAddress.Any,0)); ;//отримання повідомлення з PlayerTag гравця (Player1 or Player2)
             var obj = ObjectMessangePlayer.DesiarilizeFromJSON(str);
 
@@ -65,12 +61,9 @@ namespace Client
                 Panel_gameField.Controls.Add(Player.Picture);
             }
 
-            //Enemy.TCPsocket = TCPConnecting.ClientSocket;///////////////////////////////
-
 
             if (Player.ID == 1)
             {
-                //var s = await ReceivingAndSendingMessanges.TCPMessanges.TCPGetMessangeAsync(TCPConnecting.ClientSocket);//якщо гравцю було присвоенно PlayerTag Player1 чекаемо підключення другого гравця
                 var s = await UDPMessanges.UDPGetMessangeAsync(UDPConnecting.udpClient,new IPEndPoint(IPAddress.Any,0));//якщо гравцю було присвоенно PlayerTag Player1 чекаемо підключення другого гравця
                 var tempObjectPlaer2 = ObjectMessangePlayer.DesiarilizeFromJSON(s);
 
@@ -96,7 +89,6 @@ namespace Client
             {
                 while (true)
                 {
-                    //string temp = ReceivingAndSendingMessanges.TCPMessanges.TCPGetMessangeAsync(TCPConnecting.ClientSocket).Result;// TCP
                     string temp = ReceivingAndSendingMessanges.UDPMessanges.UDPGetMessangeAsync(UDPConnecting.udpClient, new IPEndPoint(IPAddress.Any, 0)).Result;// UDP
                     string commandServer = string.Empty;
                     try
@@ -132,16 +124,16 @@ namespace Client
             }
 
         }
-
+        // обмеження руху
         private void timer1_Tick(object sender, EventArgs e)
         {
             Foo();
             premissionToMove = true;
         }
 
+        //перемищае випущені снаряди по полю
         void Foo()
         {
-
             if (Player.listProjectile != null)
             {
                 var item = Player.listProjectile;
@@ -169,6 +161,7 @@ namespace Client
                     }
                 }
             }
+
             if (Enemy.listProjectile != null)
             {
                 var item = Enemy.listProjectile;
@@ -197,19 +190,15 @@ namespace Client
                 }
             }
         }
-
+        // обмеження пострилу
         private void timerFire_Tick(object sender, EventArgs e)
         {
+            //дозвіл на постріл
             premissionToFire = true;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //if(TCPConnecting != null)// TCP
-            //{
-            //    TCPConnecting.TCPClose();
-            //}
-
             if (UDPConnecting != null)
             {
                 UDPConnecting.UDPClose();
