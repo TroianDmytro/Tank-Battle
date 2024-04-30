@@ -14,6 +14,7 @@ namespace Client.Controller
     // обьек ігрового поля
     public class ObjectOfThePlayingField
     {
+        public int ID {  get; set; }
         public int Speed { get; set; }
         public Image Image;
         public MyVector Vector { get; set; }
@@ -31,6 +32,7 @@ namespace Client.Controller
             if (this == null)
                 return result;
             Players player = this as Players;
+
             if (player != null)
             {
                 i = 10;
@@ -109,7 +111,6 @@ namespace Client.Controller
             this.Picture.Location = location;
         }
 
-        
 
         //розвертае Image
         public void Rotate(Keys keys)

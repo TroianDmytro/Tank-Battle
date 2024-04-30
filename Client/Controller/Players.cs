@@ -1,5 +1,7 @@
 ﻿
 using ObjectMessange;
+using ReceivingAndSendingMessanges;
+using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
 using System.Windows.Forms;
@@ -16,8 +18,11 @@ namespace Client.Controller
 
         public List<Projectile> listProjectile;
 
-        public static Socket socket {  get; set; }
+        public static Socket TCPsocket {  get; set; }
 
+        public static UdpClient UDPClient { get; set; }
+
+        public static IPEndPoint ServerIPEndPoint { get; set; }
         public Players()
         {
             Picture = new PictureBox();
@@ -53,9 +58,12 @@ namespace Client.Controller
                 obj.LocationPlayerX = objPlayer.Picture.Location.X;
                 obj.LocationPlayerY = objPlayer.Picture.Location.Y;
             }
-           
+
+            obj.ID = player.ID;
+
             string objJSON = ObjectMessangePlayer.SerializeToJSON(obj);
-            ReceivingAndSendingMessanges.Messange.SendMessage(Players.socket, objJSON);
+            //ReceivingAndSendingMessanges.TCPMessanges.TCPSendMessage(Players.TCPsocket, objJSON);// TCP
+            UDPMessanges.UDPSendMessage(Players.UDPClient,/*Players.ServerIPEndPoint,*/ objJSON);
         }
 
         // опримуемо об'ект ObjectMessangePlayer 
@@ -116,31 +124,33 @@ namespace Client.Controller
         }
 
         // створення противника
-        public void CreateEnemi(string playerTag)
+        public void CreateEnemi(int idPlayer)
         {
-            if (playerTag.Equals("Player1"))
+            if (idPlayer == 1)
             {
-                CreatePlayer("Player2");
+                CreatePlayer(2);
             }
-            else if (playerTag == "Player2")
+            else if (idPlayer == 2)
             {
-                CreatePlayer("Player1");
+                CreatePlayer(1);
             }
         }
 
         // створення гравця
-        public bool CreatePlayer(string playerTag)
+        public bool CreatePlayer(int idPlayer)
         {
-            if (playerTag == "Player1") 
+            if (idPlayer == 1) 
             {
                 Vector = MyVector.TOP;
                 Image = new Bitmap(Properties.Resources.unnamed_2);
+                PlayerTag = "Player1";
             }
-            else if(playerTag == "Player2")
+            else if(idPlayer == 2)
             {
                 Vector = MyVector.TOP;
                 Image = new Bitmap(Properties.Resources.unnamed_150x150);
                 this.Rotate(Keys.Down);
+                PlayerTag = "Player2";
             }
             else
             {
@@ -151,7 +161,7 @@ namespace Client.Controller
             Picture.SizeMode = PictureBoxSizeMode.Zoom;
             Picture.Image = this.Image;
 
-            PlayerTag = playerTag;
+            this.ID = idPlayer;
             Speed = 15;
             return true;
         }
@@ -192,13 +202,14 @@ namespace Client.Controller
                     projectile.Picture.Location = new Point(this.Picture.Location.X + this.Picture.Width + 30 , this.Picture.Location.Y +16);
                 }
             }
+            projectile.ID = this.ID;
             Players.SetObjPlayer(projectile);
             GamePanel.Controls.Add(projectile.Picture);
             listProjectile.Add(projectile);
 
         }
 
-        // початкова погиція гравців
+        // початкова позиція гравців
         public void StartPosition(Panel panel)
         {
             GamePanel = panel;

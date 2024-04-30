@@ -5,10 +5,10 @@ using System.Text;
 namespace ReceivingAndSendingMessanges
 {
     //Відправка і прийом повідомлень
-    public class Messange
+    public class TCPMessanges
     {
         // прием повідомлення
-        public static string GetMessange(Socket socket)
+        public static string TCPGetMessange(Socket socket)
         {
             byte[] buffer = new byte[1024];
             int bytesRead = socket.Receive(buffer);
@@ -17,15 +17,15 @@ namespace ReceivingAndSendingMessanges
             return str;
         }
 
-        public async static Task<string> GetMessangeAsync(Socket socket)
+        public async static Task<string> TCPGetMessangeAsync(Socket socket)
         {
-            Task<string> result = Task<string>.Factory.StartNew(() => GetMessange(socket));
+            Task<string> result = Task<string>.Factory.StartNew(() => TCPGetMessange(socket));
             await result;
             return result.Result;
         }
 
         // відправка
-        public static void SendMessage(Socket socket, string message) 
+        public static void TCPSendMessage(Socket socket, string message) 
         {
             socket?.SendAsync(Encoding.Unicode.GetBytes(message));
         }

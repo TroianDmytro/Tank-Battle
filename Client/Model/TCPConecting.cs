@@ -6,14 +6,14 @@ using System.Net.Sockets;
 namespace Client.Model
 {
 
-    public class Conecting
+    public class TCPConecting
     {
         const int SERVER_PORT = 4000;
         const string SERVER_IP = "127.0.0.1";
         public Socket ClientSocket;
 
         // підключення до сервера
-        public bool ConnectingToServer()
+        public bool TCPConnectingToServer()
         {
             bool result = false;
             try
@@ -32,11 +32,11 @@ namespace Client.Model
             
         }
 
-        public async Task<bool> ConnectingToClientAsync() 
+        public async Task<bool> TCPConnectingToClientAsync() 
         {
             try
             {
-                Task < bool> task =  Task<bool>.Factory.StartNew(() => ConnectingToServer());
+                Task < bool> task =  Task<bool>.Factory.StartNew(() => TCPConnectingToServer());
                 await task;
                 return task.Result;
             }
@@ -47,7 +47,7 @@ namespace Client.Model
            
         }
 
-        public void Close()
+        public void TCPClose()
         {
             if (ClientSocket.Connected)
             {
