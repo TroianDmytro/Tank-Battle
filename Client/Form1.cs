@@ -54,16 +54,7 @@ namespace Client
             str = await ReceivingAndSendingMessanges.UDPMessanges.UDPGetMessangeAsync(UDPConnecting.udpClient,new IPEndPoint(IPAddress.Any,0)); ;//отриманн€ пов≥домленн€ з PlayerTag гравц€ (Player1 or Player2)
             var obj = ObjectMessangePlayer.DesiarilizeFromJSON(str);
 
-            //if (str.Equals("Player1") || str.Equals("Player2"))
-            //{
-            //    // створюемо гравц€
-            //    Player.CreatePlayer(str);
-            //    // виставл€емо координати на пол≥
-            //    Player.StartPosition(Panel_gameField);
-            //    // додаемо гравц€ на пол≥
-            //    Panel_gameField.Controls.Add(Player.Picture);
-
-            //}
+            
             if (obj.ID == 1 || obj.ID == 2)
             {
                 //створюемо гравц€
