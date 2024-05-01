@@ -58,9 +58,8 @@ namespace Client.Controller
             }
 
             obj.ID = player.ID;
-
             string objJSON = ObjectMessangePlayer.SerializeToJSON(obj);
-            UDPMessanges.UDPSendMessage(Players.UDPClient,/*Players.ServerIPEndPoint,*/ objJSON);
+            UDPMessanges.UDPSendMessage(Players.UDPClient, objJSON);
         }
 
         // опримуемо об'ект ObjectMessangePlayer 

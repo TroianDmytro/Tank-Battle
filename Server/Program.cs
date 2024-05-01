@@ -51,16 +51,25 @@ ColorMessang($"->{mess}", colorServer);
 UDPMessanges.UDPSendMessage(udpServer, sender1, mess);
 ColorMessang($"->Player1 {mess}", colorServer);
 
-Task task1 = Task.Factory.StartNew(() =>
+CancellationTokenSource cancelTokSSrc = new CancellationTokenSource();
+
+Task task1 = Task.Factory.StartNew((ct) =>
 {
     string MessangeClient = string.Empty;
     ObjectMessangePlayer obj = new ObjectMessangePlayer();
     IPEndPoint tempEndPoint = new IPEndPoint(IPAddress.Any, 0);//заглушка
+
     while (true)
     {
         MessangeClient = UDPMessanges.UDPGetMessange(udpServer, ref tempEndPoint);
         
         dynamic d = JsonConvert.DeserializeObject(MessangeClient);
+        if (d.Command == "Close")
+        {
+            cancelTokSSrc.Cancel();
+            ColorMessang("Close",colorServer);
+            break;
+        }
         if (d != null) 
         {
             if (d.ID == 1)
@@ -78,17 +87,15 @@ Task task1 = Task.Factory.StartNew(() =>
         }
         
     }
-});
-
-Console.ReadLine();
+    ColorMessang("Break while", colorServer);
+    
+},cancelTokSSrc.Token,cancelTokSSrc.Token);
+task1.Wait();
+ColorMessang("Main", colorServer);
 
 udpServer.Close();
 udpServer.Dispose();
-
-
 Console.ReadLine();
-
-
 
 
 

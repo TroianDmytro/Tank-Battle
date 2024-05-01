@@ -54,6 +54,7 @@ namespace Client.Model
 
         public void UDPClose()
         {
+
             if (ClientSocket.Connected)
             {
                 ClientSocket.Shutdown(SocketShutdown.Both);

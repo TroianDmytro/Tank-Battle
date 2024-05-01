@@ -15,9 +15,11 @@ namespace Client
         bool premissionToMove = true; // змінна яка дозволяе хід гравця
         bool premissionToFire = true; // змінна яка дозволяе постріл
         Players Enemy {  get; set; }// супротивник
+        CancellationTokenSource cancelTokSSrc;
         public Form1()
         {
             InitializeComponent();
+            cancelTokSSrc = new CancellationTokenSource();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -33,21 +35,30 @@ namespace Client
 
             UDPConnecting = new UDPConnecting();// UDP
 
-            bool b = await UDPConnecting.UDPConnectingToServerAsync(); // створення пидключення до сервера UDP
+            /*bool b =*/ await UDPConnecting.UDPConnectingToServerAsync(); // створення пидключення до сервера UDP
 
             string str = string.Empty;
-            if (!b)
+            //if (!b)
+            //{
+                
+            //}
+
+            Players.UDPClient = UDPConnecting.udpClient;// UDP
+            Players.ServerIPEndPoint = UDPConnecting.udpIPEndPoint;// UDP
+            Players.SetObjPlayer(Player);//UDP
+
+            // перевірка підключення до сервера
+            try
+            {
+                str = await UDPMessanges.UDPGetMessangeAsync(UDPConnecting.udpClient, new IPEndPoint(IPAddress.Any, 0)); ;//отримання повідомлення з PlayerTag гравця (Player1 or Player2)
+            }
+            catch (Exception)
             {
                 MessageBox.Show("Not TCPConnecting");
                 Mstrip_connectItem.Enabled = true;
                 return;
             }
 
-            Players.UDPClient = UDPConnecting.udpClient;// UDP
-            Players.ServerIPEndPoint = UDPConnecting.udpIPEndPoint;// UDP
-            Players.SetObjPlayer(Player);//UDP
-
-            str = await ReceivingAndSendingMessanges.UDPMessanges.UDPGetMessangeAsync(UDPConnecting.udpClient,new IPEndPoint(IPAddress.Any,0)); ;//отримання повідомлення з PlayerTag гравця (Player1 or Player2)
             var obj = ObjectMessangePlayer.DesiarilizeFromJSON(str);
 
             
@@ -64,7 +75,17 @@ namespace Client
 
             if (Player.ID == 1)
             {
-                var s = await UDPMessanges.UDPGetMessangeAsync(UDPConnecting.udpClient,new IPEndPoint(IPAddress.Any,0));//якщо гравцю було присвоенно PlayerTag Player1 чекаемо підключення другого гравця
+                string s = string.Empty;
+                try
+                {
+                    s = await UDPMessanges.UDPGetMessangeAsync(UDPConnecting.udpClient, new IPEndPoint(IPAddress.Any, 0));//якщо гравцю було присвоенно PlayerTag Player1 чекаемо підключення другого гравця
+                }
+                catch (Exception)
+                {
+                    Mstrip_connectItem.Enabled = true;
+                    return;
+                }
+
                 var tempObjectPlaer2 = ObjectMessangePlayer.DesiarilizeFromJSON(s);
 
                 if (tempObjectPlaer2.Command.Equals("Connecting Player2"))
@@ -84,15 +105,17 @@ namespace Client
             }
 
 
-
-            Task task = Task.Factory.StartNew(() =>
+            Task task = Task.Factory.StartNew((ct) =>
             {
-                while (true)
+                CancellationToken cancelTok = (CancellationToken)ct;
+
+                while (!cancelTok.IsCancellationRequested)
                 {
-                    string temp = ReceivingAndSendingMessanges.UDPMessanges.UDPGetMessangeAsync(UDPConnecting.udpClient, new IPEndPoint(IPAddress.Any, 0)).Result;// UDP
-                    string commandServer = string.Empty;
                     try
                     {
+                        string temp = UDPMessanges.UDPGetMessangeAsync(UDPConnecting.udpClient, new IPEndPoint(IPAddress.Any, 0)).Result;// UDP
+                        string commandServer = string.Empty;
+
                         ObjectMessangePlayer objectMessangePlayer = ObjectMessangePlayer.DesiarilizeFromJSON(temp);
                         Action action = () =>
                         {
@@ -100,14 +123,28 @@ namespace Client
                         };
                         Invoke(action);
                     }
+                    catch(AggregateException agEx)
+                    {
+                        DialogResult result = MessageBox.Show("Disconection",$"{Player.ID}");
+                        if (result == DialogResult.OK) 
+                        {
+                            Action action = (() =>
+                            {
+                                Mstrip_connectItem.Enabled = true;
+                            });
+                            Invoke(action);
+                            break;
+                        }
+                    }
                     catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message, "Error");
                     }
                 }
-            });
-        }
+            },cancelTokSSrc.Token,cancelTokSSrc.Token);
 
+        }
+        // відстежує натиск клавіш Up, Down, Left, Right, Space
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Space && premissionToMove)
@@ -131,7 +168,7 @@ namespace Client
             premissionToMove = true;
         }
 
-        //перемищае випущені снаряди по полю
+        //перемiщае випущені снаряди по полю
         void Foo()
         {
             if (Player.listProjectile != null)
@@ -199,8 +236,17 @@ namespace Client
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            
+
             if (UDPConnecting != null)
             {
+                ObjectMessangePlayer command = new ObjectMessangePlayer();
+                command.Command = "Close";
+                string objJSON = ObjectMessangePlayer.SerializeToJSON(command);
+                UDPMessanges.UDPSendMessage(Players.UDPClient, objJSON);
+                
+                cancelTokSSrc.Cancel();
+
                 UDPConnecting.UDPClose();
             }
         }
